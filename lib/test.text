@@ -1,0 +1,531 @@
+// ignore_for_file: sort_child_properties_last, avoid_unnecessary_containers, prefer_const_constructors
+
+import 'package:flutter/material.dart';
+import 'package:food_cashier/layout/CustomText.dart';
+import 'package:food_cashier/model/data.dart';
+
+class CustomContainer extends StatefulWidget {
+  @override
+  _CustomContainerState createState() => _CustomContainerState();
+}
+
+class _CustomContainerState extends State<CustomContainer> {
+  List<Widget> draggableItems = [];
+  Offset position = Offset(0.0, 0.0);
+  int number = 0;
+  bool isfalse = false;
+  @override
+  Widget build(BuildContext context) {
+    final fsize = MediaQuery.of(context).size.height * 0.05;
+
+    return Scaffold(
+      body: Column(
+        children: [
+          // Row(
+          //   children: [
+          //     Container(
+          //       alignment: Alignment.center,
+          //       color: Colors.white,
+          //       width: MediaQuery.of(context).size.width * 0.1,
+          //       height: MediaQuery.of(context).size.height * 0.2,
+          //       child: Text(
+          //         'POS',
+          //         style: TextStyle(
+          //             color: Colors.yellow,
+          //             fontSize: fsize,
+          //             fontWeight: FontWeight.bold),
+          //       ),
+          //     ),
+          //     Container(
+          //       color: Colors.green,
+          //       width: MediaQuery.of(context).size.width * 0.6,
+          //       height: MediaQuery.of(context).size.height * 0.2,
+          //     ),
+          //     Container(
+          //       color: Colors.blue,
+          //       width: MediaQuery.of(context).size.width * 0.3,
+          //       height: MediaQuery.of(context).size.height * 0.2,
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     Container(
+          //         // color: Colors.green,
+          //         width: MediaQuery.of(context).size.width * 0.1,
+          //         height: MediaQuery.of(context).size.height * 0.8,
+          //         child: Column(
+          //           children: [
+          //             Container(
+          //               color: Colors.yellow,
+          //               width: MediaQuery.of(context).size.width * 0.1,
+          //               height: MediaQuery.of(context).size.height * 0.15,
+          //               child: Column(children: [
+          //                 Icon(
+          //                   Icons.restaurant_menu,
+          //                   size: MediaQuery.of(context).size.height * 0.1,
+          //                 ),
+          //                 Text('โต๊ะ'),
+          //               ]),
+          //             )
+          //           ],
+          //         )),
+          //     Container(
+          //       color: Colors.red,
+          //       width: MediaQuery.of(context).size.width * 0.6,
+          //       height: MediaQuery.of(context).size.height * 0.8,
+          //     ),
+          //     Container(
+          //       color: Colors.yellow,
+          //       width: MediaQuery.of(context).size.width * 0.3,
+          //       height: MediaQuery.of(context).size.height * 0.8,
+          //     ),
+          //   ],
+          // )
+
+          Row(
+            children: [
+              Container(
+                color: Colors.grey[300],
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Stack(children: <Widget>[
+                  Container(
+                    child: Positioned(
+                      left: position.dx,
+                      top: position.dy,
+                      child: Container(
+                        child: Draggable(
+                          child: tableWidget(),
+                          feedback: tableWidget(),
+                          childWhenDragging: Container(),
+                          onDraggableCanceled: (velocity, offset) {
+                            setState(() {
+                              if (offset.dx > 0 &&
+                                  offset.dx <
+                                      MediaQuery.of(context).size.width * 0.8 &&
+                                  offset.dy > 0 &&
+                                  offset.dy <
+                                      MediaQuery.of(context).size.height *
+                                          0.8) {
+                                position = offset;
+                              }
+                              // if (isfalse) {
+                              //   draggableItems.add(tableWidget());
+                              //   isfalse = false;
+                              // }
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  )
+                ]),
+              ),
+              Container(
+                color: Color.fromARGB(255, 243, 243, 243),
+                width: MediaQuery.of(context).size.width * 0.3,
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Column(children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
+                  Container(
+                    child: DropdownButton<String>(
+                      hint: Text(
+                        'เลือกรูปแบบโต๊ะ',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                      ),
+                      items: <String>[
+                        'โต๊ะคู่',
+                        'โต๊ะกลุ่ม',
+                        'โต๊ะบาร์',
+                      ].map(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.02,
+                              ),
+                            ),
+                          );
+                        },
+                      ).toList(),
+                      value: data['table_type'],
+                      onChanged: (newValue) {
+                        setState(() {
+                          data['table_type'] = newValue;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.expand_more,
+                        size: MediaQuery.of(context).size.height * 0.04,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  data['table_type'] == 'โต๊ะบาร์'
+                      ? Column(
+                          children: [
+                            Container(
+                              child: DropdownButton<String>(
+                                hint: Text(
+                                  'เลือกด้านโต๊ะ',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            0.02,
+                                  ),
+                                ),
+                                items: <String>[
+                                  'ซ้าย',
+                                  'ขวา',
+                                ].map(
+                                  (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ).toList(),
+                                value: data['table_direction'],
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    data['table_direction'] = newValue;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.expand_more,
+                                  size:
+                                      MediaQuery.of(context).size.height * 0.04,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      if (number != 0) {
+                                        setState(() {
+                                          number -= 1;
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      'ลบ',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    child: Text(
+                                      '$number',
+                                      style: TextStyle(fontSize: fsize),
+                                    )),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        number += 1;
+                                      });
+                                    },
+                                    child: Text(
+                                      'เพิ่ม',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.green,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    //touch to add new Table
+                                  });
+                                },
+                                child: Text('+ เพิ่มโต๊ะ'),
+                              ),
+                            )),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue,
+                                ),
+                                onPressed: () {},
+                                child: Text('กดเพื่อเพิ่ม'),
+                              ),
+                            )),
+                      ),
+                    ),
+                  )
+                ]),
+              ),
+            ],
+          ),
+
+          Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: Column(children: []),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget Chair() {
+    double circleSize = MediaQuery.of(context).size.width * 0.025;
+    return Container(
+      width: circleSize,
+      height: circleSize,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width),
+      ),
+    );
+  }
+
+  Widget Table(w, h) {
+    double SquareW = MediaQuery.of(context).size.width * w;
+    double SquareH = MediaQuery.of(context).size.width * h;
+    return Container(
+      width: SquareW,
+      height: SquareH,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+  }
+
+  Widget Table_Single() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [Chair()],
+          ),
+        ),
+        Table(0.08, 0.05),
+      ],
+    );
+  }
+
+  Widget Table_Duo() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [Chair()],
+          ),
+        ),
+        Table(0.08, 0.05),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [Chair()],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget Table_Group() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [
+              Row(
+                children: [Chair(), Container(width: 20), Chair()],
+              )
+            ],
+          ),
+        ),
+        Table(0.1, 0.05),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Row(
+            children: [Chair(), Container(width: 20), Chair()],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget Table_Bar() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Column(
+              children: [
+                data['table_direction'] == 'ซ้าย'
+                    ? Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < number; i++)
+                              Container(
+                                  padding: EdgeInsets.all(20), child: Chair()),
+                          ],
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+            Table(0.1, number / 20),
+            Column(
+              children: [
+                data['table_direction'] == 'ขวา'
+                    ? Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < number; i++)
+                              Container(
+                                  padding: EdgeInsets.all(20), child: Chair()),
+                          ],
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget tableWidget() {
+    return data['table_type'] != null
+        ? data['table_type'] == 'โต๊ะคู่'
+            ? Table_Duo()
+            : data['table_type'] == 'โต๊ะกลุ่ม'
+                ? Table_Group()
+                : data['table_type'] == 'โต๊ะบาร์'
+                    ? Table_Bar()
+                    : Container()
+        : Container();
+  }
+}
+
+
+
+List.generate(positions.length, (index) {
+                  return Positioned(
+                    left: positions[index].dx,
+                    top: positions[index].dy,
+                    child: Draggable(
+                      child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        color: Colors.blue,
+                        child: Center(child: Text(tables[index])),
+                      ),
+                      feedback: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        color: Colors.blue.withOpacity(0.5),
+                        child: Center(
+                          child: Text(
+                            '',
+                          ),
+                        ),
+                      ),
+                      childWhenDragging: Container(),
+                      onDragEnd: (details) {
+                        setState(() {
+                          positions[index] = details.offset;
+                          updateOrder();
+                          addContainer();
+                        });
+                      },
+                    ),
+                  );
+                }
